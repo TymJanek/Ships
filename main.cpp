@@ -21,20 +21,19 @@ public:
     virtual bool czyZatopiony(){};
 };
 
-class Dwumasztowiec : public Statek {
+class Jednomasztowiec : public Statek {
 private:
-    int x, y, size = 2, hits = 0;
-    char poklad[2];
+    int x, y, size = 1, hits = 0;
+    char poklad[1];
 public:
-    Dwumasztowiec(int x, int y) : x(x), y(y) {
+    Jednomasztowiec(int x, int y) : x(x), y(y) {
         poklad[0] = '_';
-        poklad[1] = '_';
     }
     virtual void rysuj(int x, int y){
         cout << poklad[y - this->y];
     }
     virtual void traf(int x, int y){
-        if(poklad[y - this -> y] == ' '){
+        if(poklad[y - this -> y] == '_'){
             hits++;
         }
         poklad[y - this->y] = 'T';
@@ -48,6 +47,94 @@ public:
         }
     }
 };
+
+class Dwumasztowiec : public Statek {
+private:
+    int x, y, size = 2, hits = 0;
+    char poklad[2];
+public:
+    Dwumasztowiec(int x, int y) : x(x), y(y) {
+        poklad[0] = '_';
+        poklad[1] = '_';
+    }
+    virtual void rysuj(int x, int y){
+        cout << poklad[y - this->y];
+    }
+    virtual void traf(int x, int y){
+        if(poklad[y - this -> y] == '_'){
+            hits++;
+        }
+        poklad[y - this->y] = 'T';
+    }
+    virtual bool czyZatopiony(){
+        if(hits < size){
+            return false;
+        }
+        else{
+            return true;
+        }
+    }
+};
+
+class Trojmasztowiec : public Statek {
+private:
+    int x, y, size = 3, hits = 0;
+    char poklad[3];
+public:
+    Trojmasztowiec(int x, int y) : x(x), y(y) {
+        poklad[0] = '_';
+        poklad[1] = '_';
+        poklad[2] = '_';
+    }
+    virtual void rysuj(int x, int y){
+        cout << poklad[y - this->y];
+    }
+    virtual void traf(int x, int y){
+        if(poklad[y - this -> y] == '_'){
+            hits++;
+        }
+        poklad[y - this->y] = 'T';
+    }
+    virtual bool czyZatopiony(){
+        if(hits < size){
+            return false;
+        }
+        else{
+            return true;
+        }
+    }
+};
+
+class Czteromasztowiec : public Statek {
+private:
+    int x, y, size = 4, hits = 0;
+    char poklad[4];
+public:
+    Czteromasztowiec(int x, int y) : x(x), y(y) {
+        poklad[0] = '_';
+        poklad[1] = '_';
+        poklad[2] = '_';
+        poklad[3] = '_';
+    }
+    virtual void rysuj(int x, int y){
+        cout << poklad[y - this->y];
+    }
+    virtual void traf(int x, int y){
+        if(poklad[y - this -> y] == '_'){
+            hits++;
+        }
+        poklad[y - this->y] = 'T';
+    }
+    virtual bool czyZatopiony(){
+        if(hits < size){
+            return false;
+        }
+        else{
+            return true;
+        }
+    }
+};
+
 
 char getChar(int z){
     return z+'a';
@@ -88,7 +175,12 @@ Plansza::Plansza(int wys, int szer){
         for(int j=0; j<szer; j++)
             mapa[i][j]=-1;
 
-    dodajStatek(2, 2, 2); //3 c
+
+
+    dodajStatek(1, 0, 1);   // 2a
+    dodajStatek(2, 2, 2);   // 3c & 3d
+    dodajStatek(6, 2, 3);     // 7c & 7d & 7d
+    dodajStatek(4, 4, 4);   // 5e & 5f & 5g & 5h
 
 }
 
@@ -132,20 +224,37 @@ void Plansza::dodajStatek(int x, int y, int w){
     if(wolne){
         for(int i=0; i<w; i++)
             mapa[x][y+i] = lStatkow;
-        Statek *st = new Dwumasztowiec(x, y);
-        statki[lStatkow++] = st;
+        if(w == 1){
+            Statek *st = new Jednomasztowiec(x, y);
+            statki[lStatkow++] = st;
+        }
+        else if(w == 2){
+            Statek *st = new Dwumasztowiec(x, y);
+            statki[lStatkow++] = st;
+        }
+        else if(w == 3){
+            Statek *st = new Trojmasztowiec(x, y);
+            statki[lStatkow++] = st;
+        }
+        else if(w == 4){
+            Statek *st = new Czteromasztowiec(x, y);
+            statki[lStatkow++] = st;
+        }
+
     }
     else
         cout << endl << "Błędna pozycja statku" << endl << endl;
 }
 
 void Plansza::strzel(int w, int k){
-    if(mapa[w][k]>=0)
+    if(mapa[w][k]>=0) {
         statki[mapa[w][k]]->traf(w,k);
-//    if(statki[mapa[w][k]] -> czyZatopiony()){
-//        cout << "Statek zatopiony" << endl;
-//        lStatkow--;
-//    }
+
+        if(statki[mapa[w][k]]->czyZatopiony()) {
+            cout<<"Statek zatopiony!"<<endl;
+            lStatkow--;
+        }
+    }
     else
         mapa[w][k]=-2;
 }
@@ -172,18 +281,19 @@ int main() {
     Plansza pl(8, 8);
     pl.rysuj();
 
-    int l;
-    char z;
+    int l = 0;
+    char z = ' ';
 
-    cout << pl.dajLStatkow() << endl;
 
-    for(int i=0; i<3; i++){
+    while(pl.dajLStatkow() > 0){
         cout << "Strzel (wiersz - liczba, kolumna - znak): ";
         cin >> l >> z;
 
         pl.strzel(l-1, getInt(z));
         pl.rysuj();
+
     }
+    cout << "Wszystkie statki zatopione. Gra skończona." << endl;
 
 
 
