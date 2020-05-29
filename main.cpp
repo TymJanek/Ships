@@ -1,137 +1,104 @@
-/*
- * Do napisanego programu (gry w statki) dodać następujące funkcje:
- *   1. Możliwość dodawania jednomasztowców, trójmasztowców i czteromasztowców.
- *   2. Dodać informację o zatopieniu statku (Statek).
- *   3. Dodać informację o zatopieniu wszystkich statków – koniec gry (Plansza).
- *   4. Możliwość dotykania przez statki ścian planszy.
- *   5. Pozwolić na pionowy układ statków.
- *   6. Stworzyć drugą planszę.
- *   7. Zezwolić użytkownikowi na ustawienie statków (zadana liczba każdego rodzaju) dla dwóch plansz.
- *   8. Pozwolić na grę pomiędzy dwoma użytkownikami.
- *   9. Pozwolić na inny układ większych statków.
- */
-
 #include <iostream>
 using namespace std;
 
-class Statek {
+class Ship {
 public:
-    virtual void rysuj(int x, int y){}
-    virtual void traf(int x, int y){};
-    virtual bool czyZatopiony(){};
+    virtual void draw(int x, int y){}
+    virtual void hit(int x, int y){};
+    virtual bool isSunken(){};
 };
 
-class Jednomasztowiec : public Statek {
+class OneMasted : public Ship {
 private:
     int x, y, size = 1, hits = 0;
-    char poklad[1];
+    char deck[1];
 public:
-    Jednomasztowiec(int x, int y) : x(x), y(y) {
-        poklad[0] = '_';
+    OneMasted(int x, int y) : x(x), y(y) {
+        deck[0] = '_';
     }
-    virtual void rysuj(int x, int y){
-        cout << poklad[y - this->y];
+    virtual void draw(int x, int y){
+        cout << deck[y - this->y];
     }
-    virtual void traf(int x, int y){
-        if(poklad[y - this -> y] == '_'){
+    virtual void hit(int x, int y){
+        if(deck[y - this -> y] == '_'){
             hits++;
         }
-        poklad[y - this->y] = 'T';
+        deck[y - this->y] = 'T';
     }
-    virtual bool czyZatopiony(){
-        if(hits < size){
-            return false;
-        }
-        else{
-            return true;
-        }
+    virtual bool isSunken(){
+        return hits == size;
     }
 };
 
-class Dwumasztowiec : public Statek {
+class TwoMasted : public Ship {
 private:
     int x, y, size = 2, hits = 0;
-    char poklad[2];
+    char deck[2];
 public:
-    Dwumasztowiec(int x, int y) : x(x), y(y) {
-        poklad[0] = '_';
-        poklad[1] = '_';
+    TwoMasted(int x, int y) : x(x), y(y) {
+        deck[0] = '_';
+        deck[1] = '_';
     }
-    virtual void rysuj(int x, int y){
-        cout << poklad[y - this->y];
+    virtual void draw(int x, int y){
+        cout << deck[y - this->y];
     }
-    virtual void traf(int x, int y){
-        if(poklad[y - this -> y] == '_'){
+    virtual void hit(int x, int y){
+        if(deck[y - this -> y] == '_'){
             hits++;
         }
-        poklad[y - this->y] = 'T';
+        deck[y - this->y] = 'T';
     }
-    virtual bool czyZatopiony(){
-        if(hits < size){
-            return false;
-        }
-        else{
-            return true;
-        }
+    virtual bool isSunken(){
+        return hits == size;
     }
 };
 
-class Trojmasztowiec : public Statek {
+class ThreeMasted : public Ship {
 private:
     int x, y, size = 3, hits = 0;
-    char poklad[3];
+    char deck[3];
 public:
-    Trojmasztowiec(int x, int y) : x(x), y(y) {
-        poklad[0] = '_';
-        poklad[1] = '_';
-        poklad[2] = '_';
+    ThreeMasted(int x, int y) : x(x), y(y) {
+        deck[0] = '_';
+        deck[1] = '_';
+        deck[2] = '_';
     }
-    virtual void rysuj(int x, int y){
-        cout << poklad[y - this->y];
+    virtual void draw(int x, int y){
+        cout << deck[y - this->y];
     }
-    virtual void traf(int x, int y){
-        if(poklad[y - this -> y] == '_'){
+    virtual void hit(int x, int y){
+        if(deck[y - this -> y] == '_'){
             hits++;
         }
-        poklad[y - this->y] = 'T';
+        deck[y - this->y] = 'T';
     }
-    virtual bool czyZatopiony(){
-        if(hits < size){
-            return false;
-        }
-        else{
-            return true;
-        }
+    virtual bool isSunken(){
+        return hits == size;
     }
 };
 
-class Czteromasztowiec : public Statek {
+class FourMasted : public Ship {
 private:
     int x, y, size = 4, hits = 0;
-    char poklad[4];
+    char deck[4];
 public:
-    Czteromasztowiec(int x, int y) : x(x), y(y) {
-        poklad[0] = '_';
-        poklad[1] = '_';
-        poklad[2] = '_';
-        poklad[3] = '_';
+    FourMasted(int x, int y) : x(x), y(y) {
+        deck[0] = '_';
+        deck[1] = '_';
+        deck[2] = '_';
+        deck[3] = '_';
     }
-    virtual void rysuj(int x, int y){
-        cout << poklad[y - this->y];
+    virtual void draw(int x, int y){
+        cout << deck[y - this->y];
     }
-    virtual void traf(int x, int y){
-        if(poklad[y - this -> y] == '_'){
+    virtual void hit(int x, int y){
+        if(deck[y - this -> y] == '_'){
             hits++;
         }
-        poklad[y - this->y] = 'T';
+        deck[y - this->y] = 'T';
     }
-    virtual bool czyZatopiony(){
-        if(hits < size){
-            return false;
-        }
-        else{
-            return true;
-        }
+    virtual bool isSunken(){
+        return hits == size;
     }
 };
 
@@ -144,133 +111,133 @@ int getInt(char z){
     return z-'a';
 }
 
-class Plansza {
+class Board {
 private:
-    int wys, szer;
-    int lStatkow;
-    Statek * statki[10];
-    int ** mapa; //0 - wolne pole, -1 - pudło, x - numer statku.
+    int height, width;
+    int numberOfShips;
+    Ship * ships[10];
+    int ** map; //0 - empty, -1 - miss, x - ship number.
 public:
-    Plansza(int wys, int szer);
-    ~Plansza();
-    int dajWys();
-    int dajSzer();
-    bool pustePole(int x, int y);
-    void dodajStatek(int x, int y, int w);
-    int dajLStatkow();
-    void strzel(int w, int k);
-    void rysuj();
+    Board(int height, int width);
+    ~Board();
+    int getHeight();
+    int getWidth();
+    bool emptyField(int x, int y);
+    void addShip(int x, int y, int w);
+    int getNumberOfShips();
+    void shoot(int w, int k);
+    void draw();
 };
 
-Plansza::Plansza(int wys, int szer){
-    this->wys = wys;
-    this->szer = szer;
-    lStatkow = 0;
+Board::Board(int height, int width){
+    this->height = height;
+    this->width = width;
+    numberOfShips = 0;
 
-    mapa = new int*[wys];
-    for(int i=0; i<szer; i++)
-        mapa[i] = new int[szer];
+    map = new int*[height];
+    for(int i=0; i < width; i++)
+        map[i] = new int[width];
 
-    for(int i=0; i<wys; i++)
-        for(int j=0; j<szer; j++)
-            mapa[i][j]=-1;
+    for(int i=0; i < height; i++)
+        for(int j=0; j < width; j++)
+            map[i][j]=-1;
 
 
-
-    dodajStatek(1, 0, 1);   // 2a
-    dodajStatek(2, 2, 2);   // 3c & 3d
-    dodajStatek(6, 2, 3);     // 7c & 7d & 7d
-    dodajStatek(4, 4, 4);   // 5e & 5f & 5g & 5h
+    addShip(1, 0, 1);   // 2a
+    addShip(2, 2, 2);   // 3c & 3d
+    addShip(6, 2, 3);   // 7c & 7d & 7e
+    addShip(4, 4, 4);   // 5e & 5f & 5g & 5h
 
 }
 
-Plansza::~Plansza(){
-    for(int i=0; i<dajWys(); i++)
-        delete [] mapa[i];
-    delete [] mapa;
-    for(int i=0; i<lStatkow; i++)
-        delete statki[i];
+Board::~Board(){
+    for(int i=0; i < getHeight(); i++)
+        delete [] map[i];
+    delete [] map;
+    for(int i=0; i < numberOfShips; i++)
+        delete ships[i];
 }
 
-int Plansza::dajWys(){
-    return wys;
+int Board::getHeight(){
+    return height;
 }
 
-int Plansza::dajSzer(){
-    return szer;
+int Board::getWidth(){
+    return width;
 }
 
-int Plansza::dajLStatkow() {
-    return lStatkow;
+int Board::getNumberOfShips() {
+    return numberOfShips;
 }
 
-bool Plansza::pustePole(int x, int y){
-    if(x<dajWys() && x>0 && y<dajSzer() && y>0){
-        bool wynik = true;
+bool Board::emptyField(int x, int y){
+    if(x < getHeight() && x > 0 && y < getWidth() && y > 0){
+        bool result = true;
         for(int i=x-1; i<x+2; i++)
             for(int j=y-1; j<y+2; j++)
-                if(mapa[i][j]!=-1)
-                    wynik=false;
-        return wynik;
+                if(map[i][j] != -1)
+                    result=false;
+        return result;
     }
     return false;
 }
 
-void Plansza::dodajStatek(int x, int y, int w){
-    bool wolne=true;
+void Board::addShip(int x, int y, int w){
+    bool isEmpty=true;
     for(int i=0; i<w; i++)
-        if(!pustePole(x,y+1))
-            wolne=false;
-    if(wolne){
+        if(!emptyField(x, y + 1))
+            isEmpty=false;
+    if(isEmpty){
         for(int i=0; i<w; i++)
-            mapa[x][y+i] = lStatkow;
+            map[x][y + i] = numberOfShips;
         if(w == 1){
-            Statek *st = new Jednomasztowiec(x, y);
-            statki[lStatkow++] = st;
+            Ship *st = new OneMasted(x, y);
+            ships[numberOfShips++] = st;
         }
         else if(w == 2){
-            Statek *st = new Dwumasztowiec(x, y);
-            statki[lStatkow++] = st;
+            Ship *st = new TwoMasted(x, y);
+            ships[numberOfShips++] = st;
         }
         else if(w == 3){
-            Statek *st = new Trojmasztowiec(x, y);
-            statki[lStatkow++] = st;
+            Ship *st = new ThreeMasted(x, y);
+            ships[numberOfShips++] = st;
         }
         else if(w == 4){
-            Statek *st = new Czteromasztowiec(x, y);
-            statki[lStatkow++] = st;
+            Ship *st = new FourMasted(x, y);
+            ships[numberOfShips++] = st;
         }
 
     }
     else
-        cout << endl << "Błędna pozycja statku" << endl << endl;
+        cout << endl << "Incorrect ship position" << endl << endl;
 }
 
-void Plansza::strzel(int w, int k){
-    if(mapa[w][k]>=0) {
-        statki[mapa[w][k]]->traf(w,k);
+void Board::shoot(int w, int k){
+    if(map[w][k] >= 0) {
+        ships[map[w][k]]->hit(w, k);
 
-        if(statki[mapa[w][k]]->czyZatopiony()) {
-            cout<<"Statek zatopiony!"<<endl;
-            lStatkow--;
+        if(ships[map[w][k]]->isSunken()) {
+            cout<<"Ship sunken!"<<endl;
+            numberOfShips--;
         }
     }
     else
-        mapa[w][k]=-2;
+        map[w][k]=-2;
 }
 
-void Plansza::rysuj(){
+void Board::draw(){
     cout << ' ';
-    for(int j=0; j<dajSzer(); j++)
+    for(int j=0; j < getWidth(); j++)
         cout << ' ' << getChar(j);
     cout << endl;
-    for(int i=0; i<dajWys(); i++){
+    for(int i=0; i < getHeight(); i++){
         cout << i+1;
-        for(int j=0; j<dajSzer(); j++)
-            switch(mapa[i][j]) {
+        for(int j=0; j < getWidth(); j++)
+            switch(map[i][j]) {
                 case -2: cout << ' ' << 'X'; break;
                 case -1: cout << ' ' << '_'; break;
-                default: cout << ' '; statki[mapa[i][j]]->rysuj(i, j);
+                default: cout << ' ';
+                    ships[map[i][j]]->draw(i, j);
             }
         cout << endl;
     }
@@ -278,22 +245,22 @@ void Plansza::rysuj(){
 }
 
 int main() {
-    Plansza pl(8, 8);
-    pl.rysuj();
+    Board pl(8, 8);
+    pl.draw();
 
     int l = 0;
     char z = ' ';
 
 
-    while(pl.dajLStatkow() > 0){
-        cout << "Strzel (wiersz - liczba, kolumna - znak): ";
+    while(pl.getNumberOfShips() > 0){
+        cout << "Shoot (row - number, column - character): ";
         cin >> l >> z;
 
-        pl.strzel(l-1, getInt(z));
-        pl.rysuj();
+        pl.shoot(l - 1, getInt(z));
+        pl.draw();
 
     }
-    cout << "Wszystkie statki zatopione. Gra skończona." << endl;
+    cout << "All ships are sunken. Game over." << endl;
 
 
 
